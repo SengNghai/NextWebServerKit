@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import webpush from 'web-push';
 import { privateVapidKey, publicVapidKey } from '~/utils/pushNotification';
 
@@ -104,3 +104,5 @@ export async function POST(request: NextRequest) {
     return createResponse(500, { success: false, error: '通知推送失败，请检查订阅信息或服务器日志' });
   }
 }
+
+
