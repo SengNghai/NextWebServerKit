@@ -48,3 +48,19 @@ Private Key:
 
 =======================================
 ```
+## MongoDB
+- MongoDB URI: `mongodb://localhost:27017/expoWebAppDB`
+## Redis
+- Redis URI: `redis://localhost:6379`
+## JWT
+- JWT Secret: `your_jwt_secret`
+## Zod
+- Zod Schema: `your_zod_schema`
+## Winston
+- Winston Logger: `your_winston_logger`
+## Express Rate Limit
+- Rate Limit: `your_rate_limit`
+## Web Push
+- Web Push: `your_web_push`
+
+
