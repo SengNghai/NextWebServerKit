@@ -3,9 +3,9 @@ import 'dotenv-safe/config';
 
 // 配置 Next.js 或其他功能
 const dotenvSafeConfig = {
-  mongoUri: process.env.MONGODB_URI,
-  jwtSecret: process.env.JWT_SECRET,
-  redisUrl: process.env.REDIS_URL,
+  MONGODB_URI: process.env.MONGODB_URI,
+  JWT_SECRET: process.env.JWT_SECRET,
+  REDIS_URL: process.env.REDIS_URL,
 };
 
 export default dotenvSafeConfig;

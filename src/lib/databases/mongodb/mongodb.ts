@@ -1,6 +1,15 @@
 import { MongoClient, ObjectId } from 'mongodb';
 
-const uri = process.env.MONGODB_URI || ''; // 在环境变量中存储 MongoDB URI
+/*
+{
+  "_id": "uniqueUserId",
+  "email": "user@example.com",
+  "password": "hashedPassword",
+  "createdAt": "2025-04-30T00:04:00.000Z"
+}
+*/
+
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017'; // 在环境变量中存储 MongoDB URI
 const options = {}; // MongoDB 连接选项
 
 
@@ -25,8 +34,18 @@ if (process.env.NODE_ENV === 'development') {
   client = new MongoClient(uri, options);
   clientPromise = client.connect();
 }
-// 导出 ObjectId
-export { ObjectId };
 
-// 导出 MongoDB 连接
-export default clientPromise;
+
+// 连接数据库
+export const connectDb = async (databaseName: string, collectionName: string) => {
+  const client = await clientPromise; // MongoDB 连接
+  const db = client.db(databaseName); // MongoDB 数据库
+  const collection = db.collection(collectionName); // MongoDB 集合
+  return { 
+    client, // MongoDB 连接
+    db, // MongoDB 数据库
+    collection, // MongoDB 集合
+    ObjectId // ObjectId
+  };
+};
+

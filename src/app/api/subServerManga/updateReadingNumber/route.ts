@@ -1,7 +1,7 @@
 // 更新阅读号接口：/api/updateReadingNumber.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod'; // Zod
-import clientPromise from '~/lib/databases/mongodb/mongodb';
+import { connectDb } from '~/lib/databases/mongodb/mongodb'; // MongoDB 连接
 import { verifyToken } from '~/utils/auth';
 import logger from '~/utils/logger'; // 日志
 import rateLimit from 'express-rate-limit'; // 限流
@@ -55,13 +55,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // 连接数据库
-    const client = await clientPromise;
-    const db = client.db(); // 默认数据库名取自 URI 配置
-    const collection = db.collection('UserReadProgress');
+    const { collection, ObjectId } = await connectDb('expoWebAppDB', 'UserReadProgress'); // MongoDB 连接
 
     // 更新或插入用户阅读号
     const result = await collection.updateOne(
-      { _id: userId }, // 使用 _id 作为用户唯一标识
+      { _id: new ObjectId(userId) }, // 使用 _id 作为用户唯一标识
       { 
         $set: {
           latestReadingNumber: readingNumber,

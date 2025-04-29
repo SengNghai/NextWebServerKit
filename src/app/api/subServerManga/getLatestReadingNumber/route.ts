@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod'; // Zod
-import clientPromise, { ObjectId } from '~/lib/databases/mongodb/mongodb'; // MongoDB 连接
+import { connectDb } from '~/lib/databases/mongodb/mongodb'; // MongoDB 连接
 import { verifyToken } from '~/utils/auth'; // JWT 验证
 import connectRedis from '~/utils/redis'; // Redis 连接
 import logger from '~/utils/logger'; // 日志
@@ -68,9 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(403).json({ message: 'Unauthorized access' });
         }
         // 连接数据库
-        const client = await clientPromise; // MongoDB 连接
-        const db = client.db(); // MongoDB 数据库
-        const collection = db.collection('UserReadProgress'); // MongoDB 集合
+        const { collection, ObjectId } = await connectDb('expoWebAppDB', 'UserReadProgress'); // MongoDB 连接
 
         // 查找用户阅读号
         const userProgress = await collection.findOne({ _id: new ObjectId(userId) });
