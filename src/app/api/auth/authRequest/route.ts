@@ -36,7 +36,10 @@ const refreshToken = async (expiredToken: string) => {
     if (response.status === 401) {
       token = await refreshToken(token);
       if (token) {
-        options.headers.Authorization = `Bearer ${token}`;
+        options.headers = {
+          ...options.headers,
+          Authorization: `Bearer ${token}`,
+        };
         return fetch(url, options); // 重试请求
       }
     }

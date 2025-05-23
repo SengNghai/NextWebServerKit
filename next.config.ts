@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   env: envOptions,
   reactStrictMode: true,
+  transpilePackages: ["@heroui/react"],
+
 };
 
 export default nextConfig;
