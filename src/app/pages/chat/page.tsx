@@ -1,151 +1,64 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
+import ChatHeader from "./components/ChatHeader";
+import ChatBody from "./components/ChatBody";
+import styles from './styles.module.scss';
+import ChatFooter from "./components/ChatFooter";
 
-export default function ChatPage() {
-    const list = Array.from({ length: 100 }, (_, i) => ({
-        id: i,
-        text: `消息 ${i}`,
-        sender: i % 2 === 0 ? "me" : "other",
-    }));
-    const [messages, setMessages] = useState(list);
-    const [inputText, setInputText] = useState("");
-    const inputRef = useRef<HTMLInputElement>(null);
-    const chatRef = useRef<HTMLDivElement>(null);
+const RearPage: React.FC = () => {
+  const [messages, setMessages] = useState<string[]>(Array.from({ length: 100 }, (_, i) => `消息 ${i + 1}`));
+  const [input, setInput] = useState('');
+  const [viewportHeight, setViewportHeight] = useState<number>(932);
 
-    useEffect(() => {
-        // 禁止整个 HTML 和 BODY 滚动
-        document.documentElement.style.overflow = "hidden";
-        document.body.style.overflow = "hidden";
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-        // **全局禁用 `touchmove` 事件**
-        const preventGlobalScroll = (event: TouchEvent) => {
-            if (!chatRef.current?.contains(event.target as Node)) {
-                event.preventDefault();
-            }
-        };
 
-        document.addEventListener("touchmove", preventGlobalScroll, { passive: false });
+  // 自动滚动到底部
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-        return () => {
-            document.documentElement.style.overflow = "";
-            document.body.style.overflow = "";
-            document.removeEventListener("touchmove", preventGlobalScroll);
-        };
-    }, []);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setViewportHeight(window.innerHeight);
+    }
+  }, []);
 
-    const sendMessage = () => {
-        if (inputText.trim()) {
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { id: Date.now(), text: inputText, sender: "me" }
-            ]);
-            setInputText("");
 
-            setTimeout(() => {
-                chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
-            }, 100);
-        }
-    };
+  // 新消息时滚到底部
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
-    return (
-        <div className="chat-container">
-            <div className="chat-header">微信聊天</div>
+  // 监听窗口高度变化（解决软键盘遮挡问题）
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setViewportHeight(window.innerHeight);
+      };
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
-            <div ref={chatRef} className="chat-messages">
-                {messages.map((msg) => (
-                    <div key={msg.id} className={`chat-bubble ${msg.sender === "me" ? "sent" : "received"}`}>
-                        {msg.text}
-                    </div>
-                ))}
-            </div>
+  // 发送消息
+  const handleSend = (message: string) => {
+    setMessages([...messages, message]);
+  };
 
-            <div className="chat-input-container">
-                <input
-                    ref={inputRef}
-                    type="text"
-                    className="chat-input"
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder="输入消息..."
-                />
-                <button className="send-button" onClick={sendMessage}>发送</button>
-            </div>
+  return (
+    <div className={styles.chatContainer} style={{ height: viewportHeight }}>
+      {/* 聊天顶部 */}
+      <ChatHeader title="Message Me" />
 
-            <style jsx>{`
-                .chat-container {
-                    display: flex;
-                    flex-direction: column;
-                    height: 100vh;
-                    width: 100%;
-                    max-width: 480px;
-                    margin: 0 auto;
-                    overflow: hidden;
-                }
+      {/* 聊天内容 */}
+      <ChatBody messages={messages} />
 
-                .chat-header {
-                    position: fixed;
-                    top: 0;
-                    width: 100%;
-                    text-align: center;
-                    background: #007aff;
-                    color: white;
-                    font-size: 18px;
-                    padding: 10px;
-                }
+      {/* 聊天底部 */}
+      <ChatFooter send={handleSend} />
+    </div>
+  );
+};
 
-                .chat-messages {
-                    margin-top: 50px;
-                    flex-grow: 1;
-                    padding: 10px;
-                    overflow-y: auto;
-                    display: flex;
-                    flex-direction: column;
-                    -webkit-overflow-scrolling: touch;
-                }
-
-                .chat-bubble {
-                    max-width: 70%;
-                    padding: 10px;
-                    border-radius: 10px;
-                    margin: 5px;
-                }
-
-                .sent {
-                    align-self: flex-end;
-                    background-color: #dcf8c6;
-                }
-
-                .received {
-                    align-self: flex-start;
-                    background-color: #ffffff;
-                }
-
-                .chat-input-container {
-                    position: fixed;
-                    bottom: env(safe-area-inset-bottom, 10px);
-                    width: 100%;
-                    display: flex;
-                    background: white;
-                    padding: 10px;
-                    border-top: 1px solid #ccc;
-                }
-
-                .chat-input {
-                    flex: 1;
-                    padding: 5px;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
-                }
-
-                .send-button {
-                    margin-left: 10px;
-                    background: #007aff;
-                    color: white;
-                    padding: 10px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                }
-            `}</style>
-        </div>
-    );
-}
+export default RearPage;

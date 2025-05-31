@@ -1,0 +1,40 @@
+.chatFooter {
+    height: auto;
+    min-height: 60px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 16px 22px;
+    gap: 16px;
+    box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+  }
+  
+  .chatInput {
+    flex: 1;
+    height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 0 14px;
+    font-size: 28px;
+    outline: none;
+    width: 100%;
+    color: #000;
+}
+  
+  .chatSendBtn {
+    padding: 16px 32px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 36px;
+    cursor: pointer;
+    font-size: 28px;
+  }
+  
+  .chatSendBtn:hover {
+    background-color: #0056b3;
+  }
